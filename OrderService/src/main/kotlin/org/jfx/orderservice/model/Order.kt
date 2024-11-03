@@ -5,7 +5,7 @@ import java.math.BigDecimal
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "ORDERS")
+@Table(name = "orders")
 data class Order(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
