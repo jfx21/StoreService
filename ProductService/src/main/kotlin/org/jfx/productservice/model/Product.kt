@@ -11,14 +11,16 @@ data class Product(
     val id: Long? = null,
 
     @Column(nullable = false)
-    val name: String,
+    var name: String ="",
 
     @Column(nullable = true)
-    val description: String? = null,
+    var description: String? = "",
 
     @Column(nullable = false)
-    val price: BigDecimal,
+    var price: BigDecimal = BigDecimal.ZERO,
 
     @Column(nullable = false)
-    val stock: Int
-)
+    var stock: Int = 0
+){
+    constructor() : this(id = null)
+}
