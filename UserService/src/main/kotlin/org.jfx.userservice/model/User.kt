@@ -51,10 +51,11 @@ data class User(
 
     override fun isEnabled(): Boolean = true
 
-    constructor(username: String, password: String, roles: Set<RoleDTO>) : this(
+    constructor(username: String, password: String,email: String, roles: Set<RoleDTO>) : this(
         id = null,
         username = username,
         password = password,
+        email = email,
         roles = roles
     )
 }
