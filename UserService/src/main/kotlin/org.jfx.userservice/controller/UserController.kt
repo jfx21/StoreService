@@ -1,35 +1,47 @@
 package org.jfx.userservice.controller
 
+import jakarta.validation.Valid
 import org.jfx.userservice.model.User
+import org.jfx.userservice.model.UserLoginDTO
+import org.jfx.userservice.model.UserRegistrationDto
+import org.jfx.userservice.security.jwt.JwtTokenUtil
 import org.jfx.userservice.service.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.validation.annotation.Validated
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/users")
-@Validated
-class UserController(val userService: UserService) {
-
-    @GetMapping
-    fun getAllUsers(): List<User> = userService.getAllUsers()
-
-    @GetMapping("/{id}")
-    fun getUserById(@PathVariable id: Long): ResponseEntity<User> {
-        val user = userService.getUserById(id)
-        return if (user != null) ResponseEntity.ok(user) else ResponseEntity.notFound().build()
+class UserController(
+    private val userService: UserService,
+    private val jwtTokenUtil: JwtTokenUtil,
+    private val authenticationManager: AuthenticationManager
+) {
+    @PostMapping("/register")
+    fun registerUser(@RequestBody @Valid registrationDto: UserRegistrationDto): ResponseEntity<String> {
+        userService.registerUser(registrationDto)
+        return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully")
     }
 
-    @PostMapping
-    fun createUser(@RequestBody user: User): ResponseEntity<User> {
-        val createdUser = userService.createUser(user)
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser)
+    @PostMapping("/login")
+    fun loginUser(@RequestBody @Valid loginDto: UserLoginDTO): ResponseEntity<Map<String, String>> {
+        val authToken = UsernamePasswordAuthenticationToken(loginDto.username, loginDto.password)
+        val authentication = authenticationManager.authenticate(authToken)
+
+        if (authentication.isAuthenticated) {
+            val user = userService.findByUsername(loginDto.username)
+            val token = jwtTokenUtil.generateToken(user!!)
+            return ResponseEntity.ok(mapOf("token" to token))
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(mapOf("error" to "Invalid credentials"))
+        }
     }
 
-    @DeleteMapping("/{id}")
-    fun deleteUser(@PathVariable id: Long): ResponseEntity<Void> {
-        userService.deleteUser(id)
-        return ResponseEntity.noContent().build()
+    @GetMapping("/me")
+    fun getUserInfo(): ResponseEntity<User> {
+        val currentUser = userService.getCurrentUser()
+        return ResponseEntity.ok(currentUser)
     }
 }
