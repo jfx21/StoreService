@@ -26,7 +26,7 @@ open class SecurityConfig(
             }
             .authorizeHttpRequests { authz ->
                 authz
-                    .requestMatchers("/api/auth/**").permitAll() // Allow public access to authentication endpoints
+                    .requestMatchers("/api/users/**").permitAll() // Allow public access to authentication endpoints
                     .anyRequest().authenticated() // Require authentication for all other endpoints
             }
             .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter::class.java) // Add the JWT filter
