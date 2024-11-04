@@ -12,32 +12,23 @@ import org.springframework.security.core.userdetails.UserDetails
 @Entity
 @Table(name = "users")
 data class User(
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonProperty("id")
-    val id: Long = 0,
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) val id: Long? = null,
 
-    @field:NotBlank
-    @JsonProperty("username")
-    val username: String,
+    @field:NotBlank @JsonProperty("username") val username: String = "",
 
-    @field:Email
-    @field:NotBlank
-    @JsonProperty("email")
-    val email: String,
+    @field:Email @field:NotBlank val email: String = "",
 
-    @field:Size(min = 6)
-    @JsonProperty("password")
-    val password: String,
+    @field:Size(min = 6) val password: String = "",
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-    name = "user_roles",
-    joinColumns = [JoinColumn(name = "user_id")],
-    inverseJoinColumns = [JoinColumn(name = "role_id")])
-    var roles: Set<Role> = emptySet()
-) : UserDetails{
+    @ManyToMany(fetch = FetchType.EAGER) @JoinTable(
+        name = "user_roles",
+        joinColumns = [JoinColumn(name = "user_id")],
+        inverseJoinColumns = [JoinColumn(name = "role_id")]
+    ) var roles: Set<Role> = emptySet()
+) : UserDetails {
+
     override fun getAuthorities(): Collection<GrantedAuthority> {
-        return roles.map{ GrantedAuthority { it.name }}
+        return roles.map { GrantedAuthority { it.name } }
     }
 
     override fun getPassword(): String {
@@ -45,8 +36,9 @@ data class User(
     }
 
     override fun getUsername(): String {
-       return username
+        return username
     }
+
     override fun isAccountNonExpired(): Boolean = true
 
     override fun isAccountNonLocked(): Boolean = true
@@ -54,5 +46,12 @@ data class User(
     override fun isCredentialsNonExpired(): Boolean = true
 
     override fun isEnabled(): Boolean = true
+
+    constructor(username: String, password: String, roles: Set<Role>) : this(
+        id = null,
+        username = username,
+        password = password,
+        roles = roles
+    )
 }
 
