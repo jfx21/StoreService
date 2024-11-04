@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
 import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
 
@@ -20,15 +21,18 @@ data class User(
 
     @field:Size(min = 6) val password: String = "",
 
-    @ManyToMany(fetch = FetchType.EAGER) @JoinTable(
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
         name = "user_roles",
         joinColumns = [JoinColumn(name = "user_id")],
         inverseJoinColumns = [JoinColumn(name = "role_id")]
-    ) var roles: Set<Role> = emptySet()
+    )
+    var roles: Set<RoleDTO> = emptySet()
 ) : UserDetails {
 
     override fun getAuthorities(): Collection<GrantedAuthority> {
-        return roles.map { GrantedAuthority { it.name } }
+        // Maps roles to granted authorities required by Spring Security
+        return roles.map { SimpleGrantedAuthority(it.name) }
     }
 
     override fun getPassword(): String {
