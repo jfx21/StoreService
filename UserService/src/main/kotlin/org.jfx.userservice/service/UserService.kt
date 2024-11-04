@@ -1,18 +1,40 @@
 package org.jfx.userservice.service
 
 import org.jfx.userservice.model.User
+import org.jfx.userservice.repository.RoleRepository
 import org.jfx.userservice.repository.UserRepository
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
-
 @Service
-class UserService(private val userRepository: UserRepository) {
+class UserService(
+    private val userRepository: UserRepository,
+    private val roleRepository: RoleRepository,
+    private val passwordEncoder: PasswordEncoder
+) {
 
-    fun getAllUsers(): List<User> = userRepository.findAll()
+    fun registerUser(username: String, password: String) {
+        val userRole = roleRepository.findByName("USER")
+            ?: throw IllegalArgumentException("Default role not found")
 
-    fun getUserById(id: Long): User? = userRepository.findById(id).orElse(null)
+        val user = User(
+            username = username,
+            password = passwordEncoder.encode(password),
+            roles = setOf(userRole)
+        )
 
-    fun createUser(user: User): User = userRepository.save(user)
+        userRepository.save(user)
+    }
 
-    fun deleteUser(id: Long) = userRepository.deleteById(id)
+    fun assignRoleToUser(username: String, roleName: String) {
+        val user = userRepository.findByUsername(username)
+            ?: throw IllegalArgumentException("User not found")
+
+        val role = roleRepository.findByName(roleName)
+            ?: throw IllegalArgumentException("Role not found")
+
+        user.roles += role
+        userRepository.save(user)
+    }
 }
+
