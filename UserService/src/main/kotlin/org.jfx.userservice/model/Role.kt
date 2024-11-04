@@ -10,5 +10,5 @@ data class Role(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id:Long? = null,
-    var name: String = "" //name for ROLE, USER, ADMIN,
+    var name: String = "" //name for ROLE, USER, ADMIN, OWNER
 )
