@@ -1,7 +1,11 @@
 package org.jfx.userservice.security.jwt
 
+import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
+import lombok.extern.slf4j.Slf4j
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.security.SecurityProperties
 import org.springframework.security.core.Authentication
@@ -9,12 +13,15 @@ import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
 import java.util.Date
+import kotlin.math.log
 
 @Component
+@Slf4j
 class JwtTokenUtil(
     @Value("\${jwt.secret}") private val jwtSecret: String,
     @Value("\${jwt.expiration}") private val jwtExpirationMs: Long
 ) {
+    private val logger: Logger = LoggerFactory.getLogger(JwtTokenUtil::class.java)
 
     fun generateToken(authentication: Authentication): String {
         val userPrincipal = authentication.principal as UserDetails
@@ -42,9 +49,9 @@ class JwtTokenUtil(
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token)
             return true
-        } catch (ex: Exception) {
+        } catch (ex: ExpiredJwtException) {
             // Handle exceptions like ExpiredJwtException, UnsupportedJwtException, etc.
-            println("Invalid JWT token: ${ex.message}") //TODO change to logger when configured
+            logger.error("Invalid JWT token: ${ex.message}")
         }
         return false
     }
