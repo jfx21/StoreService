@@ -4,7 +4,9 @@ import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.security.SecurityProperties
+import org.springframework.security.core.Authentication
 import org.springframework.security.core.userdetails.User
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
 import java.util.Date
 
@@ -14,13 +16,17 @@ class JwtTokenUtil(
     @Value("\${jwt.expiration}") private val jwtExpirationMs: Long
 ) {
 
-    fun generateToken(authentication: User): String {
-        val userPrincipal = authentication.p as User
+    fun generateToken(authentication: Authentication): String {
+        val userPrincipal = authentication.principal as UserDetails
         val now = Date()
         val expiryDate = Date(now.time + jwtExpirationMs)
 
+        // Collect roles to add to token
+        val roles = userPrincipal.authorities.map { it.authority }
+
         return Jwts.builder()
             .setSubject(userPrincipal.username)
+            .claim("roles", roles)
             .setIssuedAt(now)
             .setExpiration(expiryDate)
             .signWith(SignatureAlgorithm.HS512, jwtSecret)
