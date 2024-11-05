@@ -31,8 +31,7 @@ class UserController(
         val authentication = authenticationManager.authenticate(authToken)
 
         if (authentication.isAuthenticated) {
-            val user = userService.findByUsername(loginDto.username)
-            val token = jwtTokenUtil.generateToken(user!!)
+            val token = jwtTokenUtil.generateToken(authentication)
             return ResponseEntity.ok(mapOf("token" to token))
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(mapOf("error" to "Invalid credentials"))
