@@ -21,13 +21,7 @@ data class User(
 
     @field:Size(min = 6) val password: String = "",
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-        name = "user_roles",
-        joinColumns = [JoinColumn(name = "user_id")],
-        inverseJoinColumns = [JoinColumn(name = "role_id")]
-    )
-    var roles: Set<RoleDTO> = emptySet()
+    var roles: Set<Role> = emptySet()
 ) : UserDetails {
 
     override fun getAuthorities(): Collection<GrantedAuthority> {
@@ -51,7 +45,7 @@ data class User(
 
     override fun isEnabled(): Boolean = true
 
-    constructor(username: String, password: String,email: String, roles: Set<RoleDTO>) : this(
+    constructor(username: String, password: String,email: String, roles: Set<Role>) : this(
         id = null,
         username = username,
         password = password,
