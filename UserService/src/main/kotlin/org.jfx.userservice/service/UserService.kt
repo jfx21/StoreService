@@ -2,7 +2,7 @@ package org.jfx.userservice.service
 
 import org.jfx.userservice.model.Role
 import org.jfx.userservice.model.User
-import org.jfx.userservice.model.UserRegistrationDto
+import org.jfx.userservice.model.dto.UserRegistrationDto
 import org.jfx.userservice.repository.UserRepository
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UsernameNotFoundException

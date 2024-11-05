@@ -2,8 +2,8 @@ package org.jfx.userservice.controller
 
 import jakarta.validation.Valid
 import org.jfx.userservice.model.User
-import org.jfx.userservice.model.UserLoginDTO
-import org.jfx.userservice.model.UserRegistrationDto
+import org.jfx.userservice.model.dto.UserLoginDTO
+import org.jfx.userservice.model.dto.UserRegistrationDto
 import org.jfx.userservice.security.jwt.JwtTokenUtil
 import org.jfx.userservice.service.UserService
 import org.springframework.http.HttpStatus
