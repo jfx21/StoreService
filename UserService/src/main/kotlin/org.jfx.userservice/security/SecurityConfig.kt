@@ -53,7 +53,7 @@ open class SecurityConfig(
 @Configuration
 open class WebConfig : WebMvcConfigurer {
     override fun addCorsMappings(registry: CorsRegistry) {
-        registry.addMapping("/api-docs/**").allowedOrigins("http://localhost:8081")
+        registry.addMapping("/v3/api-docs/**").allowedOrigins("http://localhost:8081")
     }
 }
 
