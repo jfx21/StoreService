@@ -6,13 +6,13 @@ import jakarta.validation.constraints.Size
 
 data class UserRegistrationDto(
     @field:NotBlank
-    val username: String,
+    val username: String = "",
 
     @field:NotBlank
     @field:Size(min = 6)
-    val password: String,
+    val password: String = "",
 
     @field:Email
     @field:NotBlank
-    val email: String
+    val email: String =""
 )
