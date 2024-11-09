@@ -12,6 +12,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.web.servlet.config.annotation.CorsRegistry
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @Configuration
 @EnableWebSecurity
@@ -29,7 +31,7 @@ open class SecurityConfig(
             .authorizeHttpRequests { auths ->
                 auths
                     .requestMatchers("/api/users/register", "/api/users/login").permitAll()
-                    .requestMatchers("/swagger-ui.html","/v3/api-docs/**").permitAll()
+                    .requestMatchers("/swagger-ui.html","/api-docs/**", "/swagger-ui/**").permitAll()
                     .requestMatchers("/api/admin/**").hasRole("ADMIN")
                     .anyRequest().authenticated()
             }
@@ -48,3 +50,10 @@ open class SecurityConfig(
         return BCryptPasswordEncoder() //check if it's the secure version
     }
 }
+@Configuration
+open class WebConfig : WebMvcConfigurer {
+    override fun addCorsMappings(registry: CorsRegistry) {
+        registry.addMapping("/api-docs/**").allowedOrigins("http://localhost:8081")  // Replace with your origin
+    }
+}
+
