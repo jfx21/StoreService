@@ -12,25 +12,32 @@ import org.springframework.security.core.userdetails.UserDetails
 
 @Entity
 @Table(name = "users")
-data class User(
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) val id: Long? = null,
+class User() : UserDetails {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private var id: Long? = null
 
-    @field:NotBlank @JsonProperty("username") val username: String = "",
+    @field:NotBlank
+    @JsonProperty("username")
+    private var username: String = ""
 
-    @field:Email @field:NotBlank val email: String = "",
+    @field:Email
+    @field:NotBlank
+    private var email: String = " "
 
-    @field:Size(min = 6) val password: String = "",
+    @field:Size(min = 6)
+    private var password: String = ""
 
-    var roles: Set<Role> = emptySet()
-) : UserDetails {
+    private var roles: Set<Role> = emptySet()
+
+
 
     override fun getAuthorities(): Collection<GrantedAuthority> {
-        // Maps roles to granted authorities required by Spring Security
         return roles.map { SimpleGrantedAuthority(it.name) }
     }
 
     override fun getPassword(): String {
-        return password //should be used with BCRYPT, remember about last OKTA accident
+        return password
     }
 
     override fun getUsername(): String {
@@ -45,12 +52,12 @@ data class User(
 
     override fun isEnabled(): Boolean = true
 
-    constructor(username: String, password: String,email: String, roles: Set<Role>) : this(
-        id = null,
-        username = username,
-        password = password,
-        email = email,
-        roles = roles
-    )
+    constructor(username: String, password: String, email: String, roles: Set<Role>) : this() {
+        id = null
+        this.username = username
+        this.password = password
+        this.email = email
+        this.roles = roles
+    }
 }
 
