@@ -1,6 +1,6 @@
 package org.jfx.userservice.service
 
-import org.jfx.userservice.model.User
+import org.jfx.userservice.model.dto.UserRegistrationDto
 import org.jfx.userservice.repository.UserRepository
 import org.jfx.userservice.service.validation.UserDataValidationResult
 import org.springframework.stereotype.Service
@@ -10,13 +10,12 @@ import java.util.regex.Pattern
 
 @Service
 open class UserDataValidationService(private val userRepository: UserRepository) {
-    private val message: String? = null
     private val phoneNumberException = arrayOf(
         "PhoneNumber is taken", "Please enter correct phone number"
     )
     private val emailException = arrayOf("Email is taken", "Please enter correct email address")
 
-    fun validateUserInputs(user: User): UserDataValidationResult {
+    fun validateUserInputs(user: UserRegistrationDto): UserDataValidationResult {
         val result = UserDataValidationResult()
         if (!isEmailCorrect(user.email)) {
             result.validationExceptions.validationExceptions.add(emailException[1])
@@ -81,12 +80,11 @@ open class UserDataValidationService(private val userRepository: UserRepository)
     }
 
     private fun isEmailTaken(email: String?): Boolean {
-        val user = userRepository.findByEmail(email!!)
-        return user != null
+        return userRepository.findByEmail(email!!).isEmpty
     }
 
     private fun isPhoneNumberTaken(phoneNumber: String?): Boolean {
-        val user = phoneNumber?.let { userRepository.findByPhoneNumber(it) }
-        return user != null
+        return userRepository.findByPhoneNumber(phoneNumber!!).isEmpty
     }
+    //TODO add isUsernameTaken
 }
