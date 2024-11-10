@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.AuthenticationException
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -27,14 +29,18 @@ class UserController(
 
     @PostMapping("/login")
     fun loginUser(@RequestBody @Valid loginDto: UserLoginDTO): ResponseEntity<Map<String, String>> {
-        val authToken = UsernamePasswordAuthenticationToken(loginDto.username, loginDto.password)
-        val authentication = authenticationManager.authenticate(authToken)
-
-        if (authentication.isAuthenticated) {
-            val token = jwtTokenUtil.generateToken(authentication)
-            return ResponseEntity.ok(mapOf("token" to token))
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(mapOf("error" to "Invalid credentials"))
+        return try {
+            val authentication = authenticationManager.authenticate(
+                UsernamePasswordAuthenticationToken(
+                    loginDto.username,
+                    loginDto.password
+                )
+            )
+            SecurityContextHolder.getContext().authentication = authentication
+            val jwtToken = jwtTokenUtil.generateToken(authentication)
+           ResponseEntity.status(HttpStatus.OK).body(mapOf("token" to jwtToken))
+        }    catch (ex : AuthenticationException){
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(mapOf("error" to "Invalid credentials"))
         }
     }
 
