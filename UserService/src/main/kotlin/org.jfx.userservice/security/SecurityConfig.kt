@@ -7,6 +7,7 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -18,6 +19,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 open class SecurityConfig(
     private val jwtTokenFilter: JwtTokenFilter,
 ) {
+    private val WHITE_LIST= arrayOf(
+        "/api/users/register", "/api/users/login",
+        "/swagger-ui.html", "/v3/api-docs/**", "/swagger-ui/**"
+    )
     @Bean
     open fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
@@ -28,9 +33,7 @@ open class SecurityConfig(
             }
             .authorizeHttpRequests { auths ->
                 auths
-                    .requestMatchers("/api/users/**").permitAll()
-                    .requestMatchers("/swagger-ui.html", "/v3/api-docs/**", "/swagger-ui/**")
-                    .permitAll() //TODO create sth like white-list
+                    .requestMatchers(*WHITE_LIST).permitAll()
                     .requestMatchers("/api/admin/**").hasRole("ADMIN")
                     .anyRequest().authenticated()
             }
