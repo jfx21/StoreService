@@ -25,9 +25,9 @@ class User() : UserDetails {
 
     @field:Email
     @field:NotBlank
-    var email: String = ""
+    private var email: String = ""
 
-    var phoneNumber:String = ""
+    private var phoneNumber:String = ""
 
     @field:Size(min = 6)
     private var password: String = ""
