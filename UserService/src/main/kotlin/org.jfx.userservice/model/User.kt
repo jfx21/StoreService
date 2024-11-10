@@ -28,7 +28,7 @@ class User() : UserDetails {
     @field:Size(min = 6)
     private var password: String = ""
 
-    private var roles: Set<Role> = emptySet()
+    var roles: Set<Role> = emptySet()
 
 
 
