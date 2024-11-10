@@ -5,6 +5,7 @@ import jakarta.persistence.*
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
+import lombok.Getter
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
@@ -12,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails
 
 @Entity
 @Table(name = "users")
+@Getter
 class User() : UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +25,9 @@ class User() : UserDetails {
 
     @field:Email
     @field:NotBlank
-    private var email: String = " "
+    var email: String = ""
+
+    var phoneNumber:String = ""
 
     @field:Size(min = 6)
     private var password: String = ""
@@ -52,11 +56,12 @@ class User() : UserDetails {
 
     override fun isEnabled(): Boolean = true
 
-    constructor(username: String, password: String, email: String, roles: Set<Role>) : this() {
+    constructor(username: String, password: String, email: String,phoneNumber: String, roles: Set<Role>) : this() {
         id = null
         this.username = username
         this.password = password
         this.email = email
+        this.phoneNumber = phoneNumber
         this.roles = roles
     }
 }

@@ -14,5 +14,8 @@ data class UserRegistrationDto(
 
     @field:Email
     @field:NotBlank
-    val email: String =""
+    val email: String = "",
+
+    @field:NotBlank
+    val phoneNumber: String = ""
 )

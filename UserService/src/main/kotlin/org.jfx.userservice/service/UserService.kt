@@ -19,6 +19,7 @@ open class UserService(
         val user = User(
             username = registrationDto.username,
             email = registrationDto.email,
+            phoneNumber = registrationDto.phoneNumber,
             password = encodedPassword,
             roles = setOf(Role.USER)
         )
