@@ -10,11 +10,10 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
 @Service
-class UserService(
+open class UserService(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder
 ) {
-
     fun registerUser(registrationDto: UserRegistrationDto) {
         val encodedPassword = passwordEncoder.encode(registrationDto.password)
         val user = User(
