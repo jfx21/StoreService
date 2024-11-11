@@ -19,7 +19,7 @@ open class SecurityConfig(
     private val jwtTokenFilter: JwtTokenFilter,
 ) {
     private val WHITE_LIST = arrayOf(
-        "/api/users/register", "/api/users/login",
+         "/api/users/login","/api/users/register","/api/users/delete",
         "/swagger-ui.html", "/v3/api-docs/**", "/swagger-ui/**"
     )
 
