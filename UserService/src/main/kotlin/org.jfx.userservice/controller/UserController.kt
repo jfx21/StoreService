@@ -43,7 +43,13 @@ class UserController(
             ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(mapOf("error" to "Invalid credentials"))
         }
     }
-
+    @DeleteMapping("/delete")
+    fun deleteUser(@RequestBody @Valid jwtToken: String): ResponseEntity<String>{
+        val result = userService.deleteUser(jwtToken)
+        if(result)
+            return ResponseEntity.ok("User deletion successfully...")
+        return ResponseEntity.badRequest().body("User deletion failed...")
+    }
     @GetMapping("/me")
     fun getUserInfo(): ResponseEntity<User> {
         val currentUser = userService.getCurrentUser()
