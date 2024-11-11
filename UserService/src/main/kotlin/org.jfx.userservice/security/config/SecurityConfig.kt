@@ -30,7 +30,7 @@ open class SecurityConfig(
     open fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .csrf {
-
+                csrf -> csrf.disable()
             }
             .sessionManagement { sessionManagement ->
                 sessionManagement
