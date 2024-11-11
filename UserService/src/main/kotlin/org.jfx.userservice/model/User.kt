@@ -6,9 +6,12 @@ import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
 import lombok.Getter
+import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.UpdateTimestamp
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
+import java.util.*
 
 
 @Entity
@@ -34,6 +37,12 @@ class User() : UserDetails {
 
     var roles: Set<Role> = emptySet()
 
+    @CreationTimestamp
+    @Column(updatable = false)
+    private var creationTime: Date = Date()
+
+    @UpdateTimestamp
+    private var updateTime: Date = Date()
 
 
     override fun getAuthorities(): Collection<GrantedAuthority> {
