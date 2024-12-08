@@ -9,6 +9,7 @@ import org.jfx.userservice.security.jwt.JwtTokenUtil
 import org.jfx.userservice.util.JsonUtil
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -26,9 +27,9 @@ open class UserService(
     private val jsonUtil: JsonUtil = JsonUtil()
     private val logger: Logger = LoggerFactory.getLogger(UserService::class.java)
 
-    fun registerUser(registrationDto: UserRegistrationDto) {
-        val encodedPassword = passwordEncoder.encode(registrationDto.password)
+    open fun registerUser(registrationDto: UserRegistrationDto) {
         val validationResult = userDataValidationService.validateUserInputs(registrationDto)
+        val encodedPassword = passwordEncoder.encode(registrationDto.password)
         if (validationResult.isUserInputCorrect) {
             val user = User(
                 username = registrationDto.username,
