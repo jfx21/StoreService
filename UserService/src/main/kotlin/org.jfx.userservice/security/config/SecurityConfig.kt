@@ -32,6 +32,7 @@ open class SecurityConfig(
             .csrf {
                 csrf -> csrf.disable()
             }
+            .cors { corsConfigurationSource() }
             .sessionManagement { sessionManagement ->
                 sessionManagement
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -48,11 +49,20 @@ open class SecurityConfig(
     }
 
     @Bean
+    open fun passwordEncoder(): PasswordEncoder {
+        return BCryptPasswordEncoder()
+    }
+    @Bean
+    open fun authenticationManager(authenticationConfiguration: AuthenticationConfiguration): AuthenticationManager {
+        return authenticationConfiguration.authenticationManager
+    }
+    @Bean
     open fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration()
-        configuration.allowedMethods = listOf("GET", "POST", "DELETE")
-        configuration.allowedOrigins = listOf("http://localhost:8081")
-        configuration.allowedHeaders = listOf("Authorization", "Content-Type")
+        configuration.allowedMethods = listOf("GET", "POST", "DELETE", "PUT", "OPTIONS")
+        configuration.allowedOrigins = listOf("http://localhost:3000")  // Your frontend URL
+        configuration.allowedHeaders = listOf("Authorization", "Content-Type", "Accept", "Origin", "X-Requested-With")
+        configuration.allowCredentials = true
         val source = UrlBasedCorsConfigurationSource()
         source.registerCorsConfiguration("/**", configuration)
         return source
