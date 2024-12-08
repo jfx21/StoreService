@@ -5,30 +5,54 @@ import org.jfx.productservice.repository.ProductRepository
 import org.springframework.stereotype.Service
 
 @Service
-class ProductService(private val productRepository: ProductRepository) {
+class ProductService(
+    private val productRepository: ProductRepository
+) {
+    fun isAvailable(productId: Long, quantity: Int): Boolean {
+        val product = getProductById(productId)
+        return product != null && product.stock >= quantity
+    }
 
+    fun reduceProductStock(productId: Long, quantity: Int): Boolean {
+        val product = getProductById(productId) ?: return false
+        if (product.stock < quantity) {
+            return false
+        }
+        product.stock -= quantity
+        productRepository.save(product)
+        return true
+    }
     fun getAllProducts(): List<Product> = productRepository.findAll()
 
     fun getProductById(id: Long): Product? = productRepository.findById(id).orElse(null)
 
-    fun createProduct(product: Product): Product = productRepository.save(product)
+    fun getProductByName(productName: String): Product? = productRepository.findProductByName(productName)
+
+    fun addProduct(product: Product): Product {
+        return productRepository.save(product)
+    }
 
     fun updateProduct(id: Long, updatedProduct: Product): Product? {
-        val existingProduct = productRepository.findById(id).orElse(null) ?: return null
-        val productToSave = existingProduct.copy(
-            name = updatedProduct.name,
-            description = updatedProduct.description,
-            price = updatedProduct.price,
-            stock = updatedProduct.stock
-        )
-        return productRepository.save(productToSave)
+        val existingProduct = productRepository.findById(id).orElse(null)
+        return if (existingProduct != null) {
+            existingProduct.name = updatedProduct.name
+            existingProduct.description = updatedProduct.description
+            existingProduct.price = updatedProduct.price
+            existingProduct.stock = updatedProduct.stock
+            productRepository.save(existingProduct)
+        } else {
+            null
+        }
     }
 
     fun deleteProduct(id: Long): Boolean {
-        if (productRepository.existsById(id)) {
-            productRepository.deleteById(id)
-            return true
+        val product = productRepository.findById(id).orElse(null)
+        return if (product != null) {
+            productRepository.delete(product)
+            true
+        } else {
+            false
         }
-        return false
     }
 }
+
