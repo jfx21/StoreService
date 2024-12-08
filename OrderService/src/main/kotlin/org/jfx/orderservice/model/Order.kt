@@ -15,9 +15,10 @@ data class Order(
     @JsonProperty("userId")
     val userId: Long? = 0L,
 
-    @JsonProperty("productId")
-    @OneToMany
-    var products: List<ProductOrder> = emptyList(),
+    @JsonProperty("products")
+    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
+    @JoinColumn(name = "order_id")
+    var products: MutableList<ProductOrder> = mutableListOf(),
 
     @JsonProperty("address")
     val address: String? = null,
@@ -29,5 +30,5 @@ data class Order(
     var status: String? = "PENDING",
 
     @JsonProperty("createdAt")
-    val createdAt: LocalDateTime? = LocalDateTime.now()
+    var createdAt: LocalDateTime? = LocalDateTime.now()
 )
