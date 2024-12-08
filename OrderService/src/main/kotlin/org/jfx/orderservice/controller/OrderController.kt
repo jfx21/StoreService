@@ -1,6 +1,7 @@
 package org.jfx.orderservice.controller
 
 import org.jfx.orderservice.model.Order
+import org.jfx.orderservice.model.request.OrderRequest
 import org.jfx.orderservice.service.OrderService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -13,7 +14,7 @@ open class OrderController(private val orderService: OrderService) {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    open fun createOrder(@RequestBody order: Order): ResponseEntity<Any> {
+    open fun createOrder(@RequestBody order: OrderRequest): ResponseEntity<Any> {
         return try {
             val savedOrder = orderService.createOrder(order)
             ResponseEntity.ok(savedOrder)
