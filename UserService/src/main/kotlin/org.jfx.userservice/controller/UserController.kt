@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/users")
+@CrossOrigin(origins = ["http://localhost:3000"])
 class UserController(
     private val userService: UserService,
     private val jwtTokenUtil: JwtTokenUtil,
@@ -43,6 +44,7 @@ class UserController(
             ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(mapOf("error" to "Invalid credentials"))
         }
     }
+
     @DeleteMapping("/delete")
     fun deleteUser(@RequestBody @Valid jwtToken: String): ResponseEntity<String>{
         val result = userService.deleteUser(jwtToken)
