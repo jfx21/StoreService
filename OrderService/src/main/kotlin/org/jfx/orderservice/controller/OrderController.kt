@@ -31,9 +31,9 @@ open class OrderController(private val orderService: OrderService) {
         } ?: ResponseEntity.notFound().build()
     }
 
-    @GetMapping("/user/{userId}")
-    fun getOrdersByUserId(@PathVariable userId: Long): List<Order> {
-        return orderService.getOrdersByUserId(userId)
+    @GetMapping("/user/{username}")
+    fun getOrdersByUserId(@PathVariable username: String): List<Order>? {
+        return orderService.getOrdersByUserName(username)
     }
 
     @PatchMapping("/{id}/status")

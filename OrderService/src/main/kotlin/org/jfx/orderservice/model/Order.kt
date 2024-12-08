@@ -11,8 +11,8 @@ data class Order(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
-    @JsonProperty("userId")
-    val userId: Long? = 0L,
+    @JsonProperty("username")
+    val userName: String = "",
 
     @JsonProperty("productIds")
     @ElementCollection

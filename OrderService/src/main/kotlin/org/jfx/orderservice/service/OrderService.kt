@@ -47,7 +47,7 @@ open class OrderService(
 
         // Create the Order object
         val order = Order(
-            userId = orderRequest.userId,
+            userName = orderRequest.username,
             productIds = productDetails.map { it.first!! },  // List of product IDs
             address = orderRequest.address,
             phoneNumber = orderRequest.phoneNumber,
@@ -66,8 +66,8 @@ open class OrderService(
         return orderRepository.findById(id).orElse(null)
     }
 
-    fun getOrdersByUserId(userId: Long): List<Order> {
-        return orderRepository.findByUserId(userId)
+    fun getOrdersByUserName(userName: String): List<Order>? {
+        return orderRepository.findByUserName(userName)
     }
 
     fun updateOrderStatus(id: Long, newStatus: String): Order {
