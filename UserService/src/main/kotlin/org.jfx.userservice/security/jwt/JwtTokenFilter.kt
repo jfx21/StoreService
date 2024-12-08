@@ -6,13 +6,14 @@ import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 
 @Component
-class JwtTokenFilter(private val jwtTokenUtil: JwtTokenUtil) : OncePerRequestFilter() {
+open class JwtTokenFilter(private val jwtTokenUtil: JwtTokenUtil) : OncePerRequestFilter() {
     private val log: Logger = LoggerFactory.getLogger(JwtTokenFilter::class.java)
 
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
@@ -20,7 +21,7 @@ class JwtTokenFilter(private val jwtTokenUtil: JwtTokenUtil) : OncePerRequestFil
         log.debug("Filtering requests from: {}", request)
         if (token != null && jwtTokenUtil.validateToken(token)) {
             val username = jwtTokenUtil.getUsernameFromToken(token)
-            val authentication = UsernamePasswordAuthenticationToken(username, null, emptyList())
+            val authentication = UsernamePasswordAuthenticationToken(username, null, listOf(SimpleGrantedAuthority("USER")))
             authentication.details = WebAuthenticationDetailsSource().buildDetails(request)
             SecurityContextHolder.getContext().authentication = authentication
         }
