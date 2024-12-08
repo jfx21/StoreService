@@ -10,15 +10,15 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.transaction.annotation.Transactional
 
 @Configuration
-open class UserDetailsServiceImpl(private val userRepository: UserRepository): UserDetailsService {
+open class UserDetailsServiceImpl(private val userRepository: UserRepository) : UserDetailsService {
 
     @Transactional
-    override fun loadUserByUsername(username: String) : UserDetails {
-            val user: User = userRepository.findByUsername(username)
-                ?: throw UsernameNotFoundException("User not found: $username")
-        val authorities = user.roles.map{ SimpleGrantedAuthority(it.name) }
+    override fun loadUserByUsername(username: String): UserDetails {
+        val user: User = userRepository.findByUsername(username)
+            ?: throw UsernameNotFoundException("User not found: $username")
+        val authorities = user.roles.map { SimpleGrantedAuthority(it.name) }
         return org.springframework.security.core.userdetails.User(
-            user.username,user.password, authorities
+            user.username, user.password, authorities
         )
     }
 }
