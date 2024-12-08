@@ -5,20 +5,21 @@ import jakarta.persistence.*
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "ORDERS")
+@Table(name = "orders")
 data class Order(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonProperty("id")
     val id: Long? = null,
 
     @JsonProperty("userId")
     val userId: Long? = 0L,
 
-    @JsonProperty("products")
-    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
-    @JoinColumn(name = "order_id")
-    var products: MutableList<ProductOrder> = mutableListOf(),
+    @JsonProperty("productIds")
+    @ElementCollection
+    val productIds: List<Long> = emptyList(),
+
+    @JsonProperty("totalPrice")
+    val totalPrice: Double? = 0.0,
 
     @JsonProperty("address")
     val address: String? = null,
