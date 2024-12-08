@@ -1,39 +1,33 @@
 package org.jfx.orderservice.model
 
-import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.persistence.*
 import java.time.LocalDateTime
 
 @Entity
 @Table(name = "ORDERS")
-data class Order @JsonCreator constructor(
+data class Order(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty("id")
     val id: Long? = null,
 
-    @Column(nullable = false)
     @JsonProperty("userId")
-    val userId: Long = 0,
+    val userId: Long? = 0L,
 
-    @Column(nullable = false)
-    @JsonProperty("product")
-    val product: String = "",
+    @JsonProperty("productId")
+    @OneToMany
+    var products: List<ProductOrder> = emptyList(),
 
-    @Column(nullable = false)
-    @JsonProperty("quantity")
-    val quantity: Int = 1,
+    @JsonProperty("address")
+    val address: String? = null,
 
-    @Column(nullable = false)
-    @JsonProperty("price")
-    val price: Double = 0.0,
+    @JsonProperty("phoneNumber")
+    val phoneNumber: String? = null,
 
-    @Column(nullable = false)
     @JsonProperty("status")
-    val status: String = "PENDING",
+    var status: String? = "PENDING",
 
-    @Column(nullable = false)
     @JsonProperty("createdAt")
-    val createdAt: LocalDateTime = LocalDateTime.now()
+    val createdAt: LocalDateTime? = LocalDateTime.now()
 )
