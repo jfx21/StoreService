@@ -7,6 +7,7 @@ import org.jfx.productservice.model.Product
 import org.jfx.productservice.service.ProductService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 
 @Service
 open class OrderService(
@@ -15,15 +16,17 @@ open class OrderService(
 ) {
     @Transactional
     open fun createOrder(order: Order): Order {
+        order.createdAt = LocalDateTime.now()
         val orderWithStatus = order.copy(status = order.status.takeIf { it!!.isNotEmpty() } ?: "PENDING")
-
+        println(order)
         // Check product availability
         var i = 0;
         var product: MutableList<Product> = mutableListOf()
         while( i< order.products.size){
-         product.add(productService.getProductByName(orderWithStatus.products[i].productName)
+            println(orderWithStatus.products[i].name!!)
+         product.add(productService.getProductByName(order.products[i].name!!)
             ?: throw IllegalArgumentException("Product not found"))
-            if (!product[i].let { productService.isAvailable(product[i].id!!, orderWithStatus.products[i].quantity.toInt()) }) {
+            if (!product[i].let { productService.isAvailable(product[i].id!!, order.products[i].quantity!!.toInt()) }) {
                 throw IllegalArgumentException("Not enough stock for product: ${product[i].name}")
             }
             product[i].id?.let { productService.reduceProductStock(it, product[i].stock) } //reducing product stock in db
