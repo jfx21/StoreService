@@ -2,6 +2,7 @@ package org.jfx.orderservice.service
 
 
 import org.jfx.orderservice.model.Order
+import org.jfx.orderservice.model.request.OrderRequest
 import org.jfx.orderservice.repository.OrderRepository
 import org.jfx.productservice.model.Product
 import org.jfx.productservice.service.ProductService
@@ -15,28 +16,51 @@ open class OrderService(
     private val productService: ProductService  // Inject ProductService here
 ) {
     @Transactional
-    open fun createOrder(order: Order): Order {
-        order.createdAt = LocalDateTime.now()
-        val orderWithStatus = order.copy(status = order.status.takeIf { it!!.isNotEmpty() } ?: "PENDING")
-        println(order)
-        // Check product availability
-        var i = 0;
-        var product: MutableList<Product> = mutableListOf()
-        while( i< order.products.size){
-            println(orderWithStatus.products[i].name!!)
-         product.add(productService.getProductByName(order.products[i].name!!)
-            ?: throw IllegalArgumentException("Product not found"))
-            if (!product[i].let { productService.isAvailable(product[i].id!!, order.products[i].quantity!!.toInt()) }) {
-                throw IllegalArgumentException("Not enough stock for product: ${product[i].name}")
+    open fun createOrder(orderRequest: OrderRequest): Order {
+        // Process the product details and calculate the total price
+        val productDetails = orderRequest.products.map { productOrder ->
+            val product = productService.getProductByName(productOrder.productName)
+                ?: throw IllegalArgumentException("Product not found: ${productOrder.productName}")
+
+            // Check if the product is available
+            if (!product.isAvailable(productOrder.quantity)) {
+                throw IllegalArgumentException("Not enough stock for product: ${product.name}")
             }
-            product[i].id?.let { productService.reduceProductStock(it, product[i].stock) } //reducing product stock in db
-            i++
+
+            // Reduce the stock of the product
+            productService.reduceProductStock(product.id!!, productOrder.quantity)
+
+            // Calculate the total price for this product (price * quantity)
+            val totalPriceForProduct = product.price.toDouble() * productOrder.quantity
+
+            // Return the product ID and the calculated total price for this product
+            product.id to totalPriceForProduct
         }
 
+        // Sum up the total price for all products in the order
+        val totalPrice = productDetails.sumOf { it.second }
 
-        // Save the order
-        return orderRepository.save(orderWithStatus)
+        // Ensure totalPrice is not null or zero
+        if (totalPrice <= 0) {
+            throw IllegalArgumentException("Total price must be greater than zero")
+        }
+
+        // Create the Order object
+        val order = Order(
+            userId = orderRequest.userId,
+            productIds = productDetails.map { it.first!! },  // List of product IDs
+            address = orderRequest.address,
+            phoneNumber = orderRequest.phoneNumber,
+            totalPrice = totalPrice  // Ensure this value is set properly
+        )
+        println(order)
+
+        // Persist the order to the database
+        return orderRepository.save(order)
     }
+
+
+
 
     fun getOrderById(id: Long): Order? {
         return orderRepository.findById(id).orElse(null)
