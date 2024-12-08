@@ -11,7 +11,7 @@ data class Product(
     val id: Long? = null,
 
     @Column(nullable = false)
-    var name: String ="",
+    var name: String = "",
 
     @Column(nullable = true)
     var description: String? = "",
@@ -21,6 +21,10 @@ data class Product(
 
     @Column(nullable = false)
     var stock: Int = 0
-){
-    constructor() : this(id = null)
+) {
+    constructor() : this(id = null, name = "", description = "", price = BigDecimal.ZERO, stock = 0)
+
+    fun isAvailable(quantity: Int): Boolean {
+        return stock >= quantity
+    }
 }
