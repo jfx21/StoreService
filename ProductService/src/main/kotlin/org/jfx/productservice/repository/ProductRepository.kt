@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository
 @Repository("ProductRepository")
 interface ProductRepository : JpaRepository<Product, Long>{
     fun findProductById(id: Long): Product?
+    fun deleteProductById(id: Long)
+    fun findProductByName(productName: String): Product?
 }
