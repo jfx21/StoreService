@@ -37,7 +37,7 @@ open class InitializeProductsLoader(private val productService: ProductService) 
                     )
                 )
                 // Save initial products
-                initialProducts.forEach { productService.createProduct(it) }
+                initialProducts.forEach { productService.addProduct(it) }
                 println("Initial products loaded successfully.")
             } else {
                 println("Products already exist, skipping initialization.")
