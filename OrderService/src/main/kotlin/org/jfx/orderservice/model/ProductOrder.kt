@@ -8,8 +8,8 @@ import jakarta.persistence.Id
 @Entity
 data class ProductOrder(
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
-    val productName: String = "",
-    val quantity: String = ""
+    val name: String? = "",
+    val quantity: String? = ""
 )
