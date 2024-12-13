@@ -44,7 +44,9 @@ class User() : UserDetails {
     @UpdateTimestamp
     private var updateTime: Date = Date()
 
-
+    fun setPassword(newPassword: String) {
+        password = newPassword
+    }
     override fun getAuthorities(): Collection<GrantedAuthority> {
         return roles.map { SimpleGrantedAuthority(it.name) }
     }
