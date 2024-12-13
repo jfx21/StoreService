@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository("OrderRepository")
 interface OrderRepository : JpaRepository<Order, Long>{
-    fun findByUserName(username: String): List<Order>?
+    fun findByUsername(username: String): List<Order>
 }

@@ -5,7 +5,9 @@ import org.jfx.orderservice.model.request.OrderRequest
 import org.jfx.orderservice.service.OrderService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
+
 
 @RestController
 @RequestMapping("/api/orders")
@@ -31,9 +33,11 @@ open class OrderController(private val orderService: OrderService) {
         } ?: ResponseEntity.notFound().build()
     }
 
-    @GetMapping("/user/{username}")
-    fun getOrdersByUserId(@PathVariable username: String): List<Order>? {
-        return orderService.getOrdersByUserName(username)
+    @GetMapping("/user/{username:[a-zA-Z0-9_]+}")
+    @Transactional
+    open fun getOrdersByUsername(@PathVariable username: String?): ResponseEntity<List<Order>?> {
+        val orders: List<Order>? = username?.let { orderService.getOrdersByUsername(it) }
+        return ResponseEntity.ok(orders)
     }
 
     @PatchMapping("/{id}/status")
@@ -46,8 +50,9 @@ open class OrderController(private val orderService: OrderService) {
     }
 
     @DeleteMapping("/{id}")
+    @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun deleteOrder(@PathVariable id: Long) {
+    open fun deleteOrder(@PathVariable id: Long) {
         orderService.deleteOrderById(id)
     }
 }
