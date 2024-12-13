@@ -12,7 +12,8 @@ data class Order(
     val id: Long? = null,
 
     @JsonProperty("username")
-    val userName: String = "",
+    @Column(name = "username")
+    val username: String = "",
 
     @JsonProperty("productIds")
     @ElementCollection
