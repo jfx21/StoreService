@@ -39,12 +39,6 @@
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
-            <version>0.9.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-ui</artifactId>
-            <version>1.7.0</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -53,6 +47,10 @@
         <dependency>
         <groupId>org.projectlombok</groupId>
         <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
         </dependency>
     </dependencies>
     <build>
