@@ -22,7 +22,7 @@ open class SecurityConfig(
     private val jwtTokenFilter: JwtTokenFilter,
 ) {
     private val WHITE_LIST = arrayOf(
-        "/api/users/login", "/api/users/register", "/api/users/delete",
+        "/api/users/login", "/api/users/register", "/api/users/delete", "/api/users/me",
         "/swagger-ui.html", "/v3/api-docs/**", "/swagger-ui/**"
     )
 
@@ -63,6 +63,7 @@ open class SecurityConfig(
         configuration.allowedOrigins = listOf("http://localhost:3000")  // Your frontend URL
         configuration.allowedHeaders = listOf("Authorization", "Content-Type", "Accept", "Origin", "X-Requested-With")
         configuration.allowCredentials = true
+        configuration.exposedHeaders = listOf("Authorization")
         val source = UrlBasedCorsConfigurationSource()
         source.registerCorsConfiguration("/**", configuration)
         return source
