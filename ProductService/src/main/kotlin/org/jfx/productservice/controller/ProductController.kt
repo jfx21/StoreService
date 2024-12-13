@@ -18,7 +18,7 @@ open class ProductController(private val productService: ProductService) {
         return if (products.isNotEmpty()) {
             ResponseEntity.ok(products)
         } else {
-            ResponseEntity.noContent().build()  // Returns 204 No Content if no products found
+            ResponseEntity.noContent().build()
         }
     }
 
@@ -29,7 +29,7 @@ open class ProductController(private val productService: ProductService) {
         return if (product != null) {
             ResponseEntity.ok(product)
         } else {
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body(null)  // 404 Not Found if product not found
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(null)
         }
     }
 
@@ -38,9 +38,9 @@ open class ProductController(private val productService: ProductService) {
     fun addProduct(@RequestBody product: Product): ResponseEntity<Product> {
         return try {
             val savedProduct = productService.addProduct(product)
-            ResponseEntity.status(HttpStatus.CREATED).body(savedProduct)  // 201 Created if successful
+            ResponseEntity.status(HttpStatus.CREATED).body(savedProduct)
         } catch (e: Exception) {
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null)  // 400 Bad Request if failed
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null)
         }
     }
 
@@ -53,12 +53,12 @@ open class ProductController(private val productService: ProductService) {
         return try {
             val product = productService.updateProduct(id, updatedProduct)
             if (product != null) {
-                ResponseEntity.ok(product)  // 200 OK if update successful
+                ResponseEntity.ok(product)
             } else {
-                ResponseEntity.status(HttpStatus.NOT_FOUND).build()  // 404 Not Found if product does not exist
+                ResponseEntity.status(HttpStatus.NOT_FOUND).build()
             }
         } catch (e: Exception) {
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null)  // 400 Bad Request if update failed
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null)
         }
     }
 
@@ -66,9 +66,9 @@ open class ProductController(private val productService: ProductService) {
     @DeleteMapping("/{id}")
     fun deleteProduct(@PathVariable id: Long): ResponseEntity<Void> {
         return if (productService.deleteProduct(id)) {
-            ResponseEntity.noContent().build()  // 204 No Content if product is deleted successfully
+            ResponseEntity.noContent().build()
         } else {
-            ResponseEntity.status(HttpStatus.NOT_FOUND).build()  // 404 Not Found if product doesn't exist
+            ResponseEntity.status(HttpStatus.NOT_FOUND).build()
         }
     }
 
