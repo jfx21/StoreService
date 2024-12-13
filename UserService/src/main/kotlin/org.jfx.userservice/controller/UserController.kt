@@ -1,6 +1,7 @@
 package org.jfx.userservice.controller
 
 import jakarta.validation.Valid
+import org.jfx.userservice.model.PasswordUpdateRequest
 import org.jfx.userservice.model.User
 import org.jfx.userservice.model.dto.UserLoginDTO
 import org.jfx.userservice.model.dto.UserRegistrationDto
@@ -52,9 +53,19 @@ class UserController(
             return ResponseEntity.ok("User deletion successfully...")
         return ResponseEntity.badRequest().body("User deletion failed...")
     }
+    @PutMapping("/me/password")
+    fun updateUserPassword(@RequestBody passwordUpdateRequest: PasswordUpdateRequest): ResponseEntity<Any>{
+        try {
+            userService.updatePassword(passwordUpdateRequest)
+            return ResponseEntity.ok("Password has been updated successfully...")
+        } catch (ex: IllegalArgumentException) {
+            return ResponseEntity.badRequest().body(ex.message)
+        }
+    }
     @GetMapping("/me")
     fun getUserInfo(): ResponseEntity<User> {
         val currentUser = userService.getCurrentUser()
+        println(currentUser.username)
         return ResponseEntity.ok(currentUser)
     }
 }

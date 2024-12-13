@@ -1,6 +1,9 @@
 package org.jfx.userservice.service
 
+import org.jfx.userservice.exception.FailedToChangePasswordException
+import org.jfx.userservice.exception.PasswordIsNotValidException
 import org.jfx.userservice.exception.UserDataIsNotValidException
+import org.jfx.userservice.model.PasswordUpdateRequest
 import org.jfx.userservice.model.Role
 import org.jfx.userservice.model.User
 import org.jfx.userservice.model.dto.UserRegistrationDto
@@ -9,7 +12,6 @@ import org.jfx.userservice.security.jwt.JwtTokenUtil
 import org.jfx.userservice.util.JsonUtil
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -44,10 +46,23 @@ open class UserService(
             throw UserDataIsNotValidException(jsonUtil.toJson(validationResult))
         }
     }
-
-    fun getCurrentUser(): User {
+    @Transactional
+    open fun getCurrentUser(): User {
         val username = SecurityContextHolder.getContext().authentication.name
-        return userRepository.findByUsername(username) ?: throw UsernameNotFoundException("User not found")
+        return userRepository.findByUsername(username) ?: throw UsernameNotFoundException("User not found $username")
+    }
+    @Transactional
+    open fun updatePassword(req: PasswordUpdateRequest){
+        val passCheck = userDataValidationService.isPasswordCorrect(req.newPassword)
+        if(passCheck){
+            var currentUser = getCurrentUser()
+            if(!passwordEncoder.matches(req.currentPassword, currentUser.password))
+                throw PasswordIsNotValidException("Current password is not valid...")
+            currentUser.password = passwordEncoder.encode(req.newPassword)
+            userRepository.save(currentUser)
+        }else{
+            throw FailedToChangePasswordException("Failed to change password...Please try again.")
+        }
     }
 
     @Transactional
