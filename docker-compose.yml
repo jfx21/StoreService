@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  user-service:
+    build:
+      context: .
+      dockerfile: ./UserService/Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      - JAVA_OPTS=-Xmx512m
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/user_db
+      - SPRING_DATASOURCE_USERNAME=${USER_DB}
+      - SPRING_DATASOURCE_PASSWORD=${USER_DB_PASSWORD}
+    depends_on:
+      - db
+    restart: always
+    env_file:
+      - .env
+  product-service:
+    build:
+      context: .
+      dockerfile: ./ProductService/Dockerfile
+    ports:
+      - "8083:8083"
+    environment:
+      - JAVA_OPTS=-Xmx512m
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/products_db
+      - SPRING_DATASOURCE_USERNAME=${PRODUCT_DB}
+      - SPRING_DATASOURCE_PASSWORD=${PRODUCT_DB_PASSWORD}
+    depends_on:
+      - db
+    restart: always
+    env_file:
+      - .env
+
+  order-service:
+    build:
+      context: .
+      dockerfile: ./OrderService/Dockerfile
+    ports:
+      - "8082:8082"
+    environment:
+      - JAVA_OPTS=-Xmx512m
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/orders_db
+      - SPRING_DATASOURCE_USERNAME=${ORDER_DB}
+      - SPRING_DATASOURCE_PASSWORD=${ORDER_DB_PASSWORD}
+    depends_on:
+      - db
+    restart: always
+    env_file:
+      - .env
+
+  db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_DB=db
+      - SPRING_DATASOURCE_USERNAME=${DB_USER}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+volumes:
+  postgres_data:
