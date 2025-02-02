@@ -1,9 +1,16 @@
-FROM ubuntu:latest
-LABEL authors="jfx"
-
-FROM openjdk:21-jdk-alpine
+FROM maven:3.9.6-eclipse-temurin-21 AS build
 WORKDIR /app
+COPY ../pom.xml ../
+COPY ./pom.xml ./
 COPY . .
-RUN mvn clean package
-EXPOSE  8081
-CMD ["java", "-jar", "target/UserService-1.0-SNAPSHOT.jar"]
+
+RUN mvn clean install -DskipTests
+RUN mvn clean package -DskipTests
+
+FROM openjdk:21-jdk-slim
+
+WORKDIR /app
+COPY --from=build /app/UserService/target/UserService-1.0-SNAPSHOT.jar app.jar
+
+EXPOSE 8081
+CMD ["java", "-jar", "app.jar"]
