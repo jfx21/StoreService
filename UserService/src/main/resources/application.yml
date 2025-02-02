@@ -4,9 +4,25 @@ server:
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/users_db
-    username: user
-    password: password
+    username: ${USER_DB}
+    password: ${USER_DB_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+jwt:
+  expiration: 86400000 #expiration in ms which equals 1 day
+
+logging:
+  level:
+    root: info
+  file:
+    name: user-service.log
+    path: logs/
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+
+
