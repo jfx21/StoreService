@@ -3,13 +3,14 @@ WORKDIR /app
 COPY ../pom.xml ../
 COPY ./pom.xml ./
 COPY . .
+
 RUN mvn clean install -DskipTests
-RUN mvn clean package -DskipTests
+RUN mvn clean package -DskipTests spring-boot:repackage
 
 FROM openjdk:21-jdk-slim
 
 WORKDIR /app
-COPY --from=build /app/ProductService/target/ProductService-1.0-SNAPSHOT.jar app.jar
+COPY --from=build /app/ProductService/target/*.jar app.jar
 
 EXPOSE 8083
 CMD ["java", "-jar", "app.jar"]
