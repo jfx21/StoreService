@@ -11,6 +11,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>UserService</artifactId>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>

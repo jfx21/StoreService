@@ -55,7 +55,7 @@ open class UserService(
     open fun updatePassword(req: PasswordUpdateRequest){
         val passCheck = userDataValidationService.isPasswordCorrect(req.newPassword)
         if(passCheck){
-            var currentUser = getCurrentUser()
+            val currentUser = getCurrentUser()
             if(!passwordEncoder.matches(req.currentPassword, currentUser.password))
                 throw PasswordIsNotValidException("Current password is not valid...")
             currentUser.password = passwordEncoder.encode(req.newPassword)

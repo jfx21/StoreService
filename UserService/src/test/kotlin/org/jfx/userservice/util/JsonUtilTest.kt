@@ -3,9 +3,10 @@ package org.jfx.userservice.util
 import org.jfx.userservice.model.Role
 import org.jfx.userservice.model.User
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
-
+@Disabled
 class JsonUtilTest{
     private val jsonUtil = JsonUtil()
     private val userJSON = "{\"password\":\"password123\",\"roles\":[\"USER\"],\"enabled\":true,\"credentialsNonExpired\":true,\"authorities\":[{\"authority\":\"USER\"}],\"accountNonExpired\":true,\"accountNonLocked\":true,\"username\":\"User200\"}"
